@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata: 
+  name: http
+spec:
+  minReadySeconds: 5
+  selector:
+    matchLabels: 
+       app: http
+  template: 
+     metadata:
+       labels: 
+         app: http 
+         version: "v1.0"
+     spec:
+       hostname: http
+       containers:
+         - name: http 
+           image: httpd:2
+           ports:
+             - name: http
+               containerPort: 80
+          
+
+            
+
+
+         
+       
+
+
+
