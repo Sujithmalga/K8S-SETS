@@ -1,1 +1,2 @@
-"# CodeSoftJune" 
+kubernetes prartices
+
