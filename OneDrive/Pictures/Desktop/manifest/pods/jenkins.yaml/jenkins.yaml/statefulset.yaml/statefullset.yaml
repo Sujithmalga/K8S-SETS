@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nginx
+spec:
+  minReadySeconds: 5
+  replicas: 2
+  selector:
+    matchLabels:
+      name: nginx
+  serviceName: nginxsvc
+  template:
+    metadata:
+      labels: 
+         name: nginx
+    spec: 
+      containers:
+        - name: nginx
+          image: httpd:2.4.58
+          ports:
+            - name: nginx
+              containerPort: 80
+          resources:
+           requests:
+             memory: "64Mi"
+             cpu: "250m"
+           limits:
+             memory: "128Mi"
+             cpu: "500m"
+          workingDir: /azureuser
+          readinessProbe: 
+            httpGet:
+              host: nginx
+              port: 80
+              path: /
+  updateStrategy:
+     type: RollingUpdate
+     rollingUpdate:  
+       maxUnavailable:  50%
+  volumeClaimTemplates:
+    - apiVersion: v1 
+      kind: PersistentVolumeClaim
+      metadata:
+        name:  nginx
+      spec:
+        accessModes:
+           - ReadWriteOnce
+        volumeMode: Block
+        resources:
+          requests:
+            storage: 5Gi
+        selector:
+          matchLabels:
+            name: nginx
+        storageClassName: managed-csi
+        volumeName: pvc 
+
+            
