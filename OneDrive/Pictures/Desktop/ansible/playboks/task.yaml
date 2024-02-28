@@ -2,6 +2,10 @@
   hosts: webserver
   become: yes
   tasks:
+     - name: fail for unsupported os
+       ansible.builtin.fail:
+         msg: "This playbook is designed only for CentOS os"
+       when: ansible_facts['distribution'] == 'CentOS'
      - name: install  apache2
        ansible.builtin.apt:
          name: "{{ package }}"
@@ -14,7 +18,7 @@
           state: started
      - name: install php
        ansible.builtin.apt:
-          name: "{{ php_package }}"
+          name: "{{ php_packages }}"
           update_cache: yes
           state: present
      - name: restart apache2
