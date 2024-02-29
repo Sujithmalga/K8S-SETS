@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: alpine-deploy
+spec:
+  minReadySeconds: 5
+  replicas: 4
+   selector:
+     matchLabels: 
+       env: dev
+       app: alpine-deploy
+       version: "v1.0"
+   strategy:
+    type:  RollingUpdate
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+   template: 
+     metadata:
+       name: alpine-deploy 
+       labels:
+         env: dev
+         app: alpine-deploy
+         version: "v1.0"
+     spec:
+       containers:
+        - name: alpine-deploy
+          image: alpine
+          livenessProbe:
+            httpGet: 
+              port: 80
+          ports:
+            - name: alpine-deploy
+              containerPort: 80
+              resources:
+                limits: 
+                  cpu: "500m"
+                  memory: "250Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine-service
+spec:
+   selector:
+     name: alpine-deploy
+   type: NodePort
+ports:
+  - name: alpine-deploy
+    nodePort: 31000
+    port: 80
+    targetPort: 8080
+  
+

@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: spec
+  labels:
+    app: spec
+spec:
+  minReadySeconds: 3
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spec
+  template:
+    metadata:
+      name: spec
+      labels:
+        env: dev
+        app: spec
+        version: v3.4.0
+    spec:
+      containers:
+        - name: spec-pod
+          image: shaikkhajaibrahim/spcjan2024:1.0
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "250Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spec-pod
+spec:
+  type: NodePort
+  ports:
+    - name: spec
+      port: 8080
+      nodePort: 31000
+      targetport: 8080

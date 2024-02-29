@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingesssvc 
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/rewrite-target: /
+spec: 
+  ingressClassName: ingessvc 
+  rules:
+    - host: example.bar.com
+      http:  
+        paths: 
+          - path: '/svc1'
+            pathType: Prefix
+            backend:
+               service: 
+                  name: svc1 
+                  port:
+                    number: 15672
+          - path: '/svc2'
+            pathType: Prefix
+            backend:
+               service: 
+                name: svc1 
+                port:
+                   number: 5672
+          - path: '/svc'
+            pathType: Prefix
+            backend:
+               service: 
+                  name: svc
+                  port:
+                    number: 1434

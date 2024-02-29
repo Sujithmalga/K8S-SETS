@@ -1,0 +1,9 @@
+apiservice: v1 
+kind: ConfigMap
+metadata:
+   name: config
+data:
+  MYSQL_ROOT_PASSWORD: bm9w
+  MYSQL_DATABASE: emp
+  MYSQL_USER: bm9w
+  MYSQL_PASSWORD: bm9wQDEyMw==

@@ -1,0 +1,56 @@
+role.yaml
+rolebinding.yaml
+cluster role.yaml
+clusterrolwbinding.yaml
+------
+role.yaml--\
+---------------
+ 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+    name: role
+rules:
+  apiGroups:  rbac.authorization.k8s.io/v1 
+  resourceNames:
+      - user: sujith-admin
+        resources:  
+          - '\*'
+        verbs:
+           - '\*'
+---
+rolebinding.yaml
+-------------------
+apiVersion: rbac.authorization.k8s.io:v1
+kind: RoleBinding
+metadata: 
+   name: rolebinding
+roleRef:
+   apiGroup:  rbac.authorization.k8s.io/v1
+   kind: RoleRef
+   name:  sujith
+subjects:
+       - apiGroup: rbac.authorization.k8s.io
+         name: sujith
+         kind: user
+       - apiGroup: ""
+         kind: serviceAccount
+         name: sujth-admin
+
+ClusterRole
+--------------------- 
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+    name:  ClusterRole
+rules:
+   - apiGroups: rbac.authorization.k8s.io/v1
+     resourceNames: 
+       - name: sujith
+     resources: 
+      -  '\*'
+     verbs:
+      - '\*
+---------------
+ 

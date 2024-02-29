@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: httpd
+spec:
+  affinity:
+     podAffinity:
+         requiredDuringSchedulingIgnoredDuringExecution:
+            -  labelSelector:
+                 matchLabels: 
+                     name: apache
+               topologyKey: kubernetes.io/hostname
+  containers:  
+     - name: jenkins
+       image: mysql
+       ports: 
+          - containerPort: 3306  
+       livenessProbe:
+           httpGet:
+               path: \
+               port	: 3306 
+       
+                      

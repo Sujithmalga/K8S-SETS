@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+   minReadySeconds: 1
+   replicas: 3
+   selector:
+     
+   template: 
+     metadata:
+       labels:
+         app: nginx
+         env: dev
+     spec:
+       containers:
+         - name: nginx
+           image: nginx
