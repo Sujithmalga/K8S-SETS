@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resmang-pod
+spec:
+  containers:
+    - name: resource-pod
+      image: httpd:2
+      resources: 
+       - limits:
+           cpu: 500m
+           memory: 512mi
+       - requests:
+           cpu: 1000m
+           memory: 1000mi

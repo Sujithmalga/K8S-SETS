@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: httpd
+spec:
+ tolerations:
+    - key: team
+      operator: Equal
+      value: prod
+      effect: NoSchedule
+ containers:
+    - name: httpd
+      image: httpd
+      ports: 
+        - containerPort: 80
+      

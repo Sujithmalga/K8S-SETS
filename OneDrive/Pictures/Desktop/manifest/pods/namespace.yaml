@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpine
+  namespace: dev
+spec:
+  minReadySeconds: 5
+  progressDeadlineSeconds: 600
+  replicas: 4
+  selector:
+    matchLabels:
+       app: alpine
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+  template:
+    metadata:
+      labels: 
+        app: alpine 
+        version: "v1.0"
+    spec:
+      containers:
+        - name: alpine 
+          image: alpine
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "250Mi"
+          ports:  
+            - name: alpine 
+              containerPort: 80
+
+
+
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+
+
+---
+apiVersion: v1 
+kind: Service
+metadata:
+  name: my-alpine-service  # Provide a valid name for your service
+  labels:
+    app: alpine
+    version: "v1.0"
+  namespace: dev
+spec:
+  selector:
+    app: alpine
+  ports:
+    - name: alpine
+      port: 80
+      targetPort: 80
+      nodePort: 31001
+  type: NodePort
+
+      

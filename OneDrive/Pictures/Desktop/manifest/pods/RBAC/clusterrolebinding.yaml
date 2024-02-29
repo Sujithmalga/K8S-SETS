@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: clusterolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io/v1 
+  kind: RoleRef
+  name: sujth
+subjects:
+  - apiGroups: rbac.authorization.k8s.io/v1
+    kind:  Subject
+    name:  sujith
+    namespace: dev

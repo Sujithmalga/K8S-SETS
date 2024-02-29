@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sqlserver
+spec:
+  minReadySeconds: 5
+  updateStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+          maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: sqlserver
+  serviceName: svc
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: sqlserver
+    spec:
+      containers:
+      - name: sqlserver
+        image: mcr.microsoft.com/azure-sql-edge
+        ports:
+        - containerPort: 1434
+          name: web
+        volumeMounts:
+        - name: sqlserverdata
+          mountPath: /var/opt/mssql
+        env: 
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: Developer
+        - name: SA_PASSWORD
+          value: 8jkGh47hnDw89Haq8LN2
+  volumeClaimTemplates:
+  - metadata:
+      name: sqlserver
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      selector:
+        matchLabels:
+          app: sqlserver
+      storageClassName: managed-csi

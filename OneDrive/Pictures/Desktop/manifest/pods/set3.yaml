@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: data1
+spec:
+  serviceName:  sqlsvs
+  replicas: 3
+  selector:
+    matchLabels:
+      app: data
+  template:
+    metadata:
+      labels:
+        app: data
+    spec:
+      containers:
+      - name: data-container
+        image: mysql:8.0-debian
+        ports:
+            - name: data
+              containerPort:  30001
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: nop 
+          - name: MYSQL_DATABASE
+            value: emp
+          - name: MYSQL_USER
+            value: nop 
+          - name: MYSQL_PASSWORD
+            value: nop@123
+        resources:
+          limits:
+            cpu: "1000m"  # Adjust as needed
+            memory: "512Mi"  # Adjust as needed
+          requests:
+            cpu: "250m"  # Adjust as needed
+            memory: "256Mi"  # Adjust as needed
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: managed-csi
+      resources:
+        requests:
+          storage: 4Gi

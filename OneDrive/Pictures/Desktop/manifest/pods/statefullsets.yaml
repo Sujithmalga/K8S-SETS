@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mystatefulset 
+spec: 
+  minReadySeconds: 5
+  replicas: 2
+  selector: 
+     matchLabels: 
+        name: httpd
+  serviceName: httpd-sv
+  template:
+     metadata:
+        labels:
+           name: httpd
+     spec:
+         containers:  
+            - name: httpd
+              image: httpd:2
+              ports:
+                 - name: httpd
+                   containerPort: 30001
+              resources:
+                 limits:
+                     cpu: "1000m"
+                     memory: "500Mi"
+              volumeMounts:
+                   - name: httpd
+                     mountPath: /httpd/db
+  volumeClaimTemplates:
+            - metadata:
+                name: httpd
+              spec:
+                 selector: 
+                   matchLabels: 
+                     name: httpd                
+                 resources:
+                    requests:
+                       storage: 5Gi
+                    claims: 
+                       - name:  httpd
+                 storageClassName: managed
+                 accessModes:
+                    - ReadWriteOnce

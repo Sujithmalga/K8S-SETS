@@ -1,0 +1,12 @@
+perfom activys on 
+today(4/2/2024)
+ 1 . job and cronjob
+ 2. daeamon set
+ pod select node type:
+ \ 3. affinity and antiaffinity
+ tommorow (5/2/2024)
+ 4. node selector
+ 5. taint and tolerence 
+ 6. volume persistence 
+ 7.node name
+ 

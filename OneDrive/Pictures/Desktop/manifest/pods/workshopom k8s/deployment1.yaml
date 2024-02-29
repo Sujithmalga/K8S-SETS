@@ -1,0 +1,328 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailserver
+  template:
+    metadata:
+      labels:
+        app: mailserver
+    spec:
+      containers:
+        - name: mailserver
+          image: maildev/maildev:1.1.0
+          ports:
+            - containerPort: 25
+            - containerPort: 4000
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "500Mi"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logserver
+  template:
+    metadata:
+      labels:
+        app: logserver
+    spec:
+      containers:
+        - name: logserver
+          image: datalust/seq:latest
+          ports:
+           - containerPort: 5341
+          env:
+           - name: ACCEPT_EULA
+          livenessProbe:
+           httpGet:
+              path: /logserver
+              port: 5341
+          value: "Y"
+          resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehiclemanagementapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehiclemanagementapi
+  template:
+    metadata:
+      labels:
+        app: vehiclemanagementapi
+    spec:
+      containers:
+       - name: vehiclemanagementapi
+         image: pitstop/vehiclemanagementapi:1.0
+         ports:
+          - containerPort: 5000
+         env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Production
+         livenessProbe:
+           httpGet:
+              path: /vehiclemanagementapi
+              port: 5000
+         resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+  
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customermanagementapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customermanagementapi
+  template:
+    metadata:
+      labels:
+        app: customermanagementapi
+    spec:
+      containers:
+      - name: customermanagementapi
+        image: pitstop/customermanagementapi:1.0
+        ports:
+        - containerPort: 5100
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Production
+        livenessProbe:
+           httpGet:
+              path: /customermanagementapi
+              port: 5100
+        resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+        
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workshopmanagementapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workshopmanagementapi
+  template:
+    metadata:
+      labels:
+        app: workshopmanagementapi
+    spec:
+      containers:
+       - name: workshopmanagementapi
+         image: pitstop/workshopmanagementapi:1.0
+         ports:
+          - containerPort: 5200
+         env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Production
+         livenessProbe:
+           httpGet:
+              path: /workshopmanagementapi
+              port: 5200
+         resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auditlogservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auditlogservice
+  template:
+    metadata:
+      labels:
+        app: auditlogservice
+    spec:
+      containers:
+      - name: auditlogservice
+        image: pitstop/auditlogservice:1.0
+        env:
+         - name: DOTNET_ENVIRONMENT
+           value: Production
+        resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoiceservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: invoiceservice
+  template:
+    metadata:
+      labels:
+        app: invoiceservice
+    spec:
+      containers:
+      - name: invoiceservice
+        image: pitstop/invoiceservice:1.0
+        env:
+        - name: DOTNET_ENVIRONMENT
+          value: Production
+        resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notificationservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notificationservice
+  template:
+    metadata:
+      labels:
+        app: notificationservice
+    spec:
+      containers:
+      - name: notificationservice
+        image: pitstop/notificationservice:1.0
+        env:
+         - name: DOTNET_ENVIRONMENT
+           value: Production
+        resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timeservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timeservice
+  template:
+    metadata:
+      labels:
+        app: timeservice
+    spec:
+      containers:
+      - name: timeservice
+        image: pitstop/timeservice:1.0
+        env:
+         - name: DOTNET_ENVIRONMENT
+           value: Production
+        livenessProbe:
+           httpGet:
+              path: /timeservice
+              port: 7005
+        resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workshopmanagementeventhandler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workshopmanagementeventhandler
+  template:
+    metadata:
+      labels:
+        app: workshopmanagementeventhandler
+    spec:
+      containers:
+      - name: workshopmanagementeventhandler
+        image: pitstop/workshopmanagementeventhandler:1.0
+        env:
+        - name: DOTNET_ENVIRONMENT
+          value: Production
+        resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp
+          image: pitstop/webapp:1.0
+          ports:
+           - containerPort: 7005
+          livenessProbe:
+            httpGet:
+               path: /webapp
+               port: 7005
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+          resources:
+            limits:  
+               cpu: "1000m"
+               memory: "500Mi"
+       

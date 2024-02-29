@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginxsvc
+spec:
+   type: NodePort
+   selector:
+       name: nginx
+   ports:
+      - name: nginx
+        port: 80
+        targetPort: 80
+        nodePort: 31000
+
+
+
+
+
+
+
+
+
+
+
+
+
+----
+ rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+      - "./rabbitmq:/etc/pitstop/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_CONFIG_FILE=/etc/pitstop/rabbitmq.conf
+
+  sqlserver:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: sqlserver
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+    ports:
+      - "1434:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+      - SA_PASSWORD=8jkGh47hnDw89Haq8LN2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        

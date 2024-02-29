@@ -1,0 +1,28 @@
+--- 
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: alpine
+spec:
+  schedule: "15 10 * * *"
+  jobTemplate:
+    metadata:
+      labels: 
+         app: alpine
+         version: "v1.0"
+    spec:
+      template:
+        metadata: 
+          labels: 
+            app: alpine
+            version: "v1.0"
+        spec: 
+          restartPolicy: Never
+          containers:
+            - name: alpine
+              image: alpine:3.18
+              args:
+                - sleep
+                - 1d
+
+        

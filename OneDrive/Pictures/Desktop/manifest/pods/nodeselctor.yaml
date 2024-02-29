@@ -1,0 +1,21 @@
+apiVersion: v1 
+kind: Pod 
+metadata:
+  name:  jenkins
+  labels: 
+    app: dev
+    name: jenkins   
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: aks-nodepool1-41862322-vmss000001
+  containers: 
+      - name:  jenkins
+        image:  jenkins
+        ports:
+         - name: jenkins
+           containerPort: 80
+        resources: 
+           limits:
+             cpu: "500m"
+             memory: "250Mi"
+            
