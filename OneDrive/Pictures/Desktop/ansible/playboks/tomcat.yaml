@@ -1,0 +1,43 @@
+sudo yum update
+sudo yum install java-11-openjdk-devel -y
+sudo useradd -r -m -U -d /opt/tomcat -s /bin/false tomcat
+cd /tmp/
+wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.10/bin/apache-tomcat-10.0.10.tar.gz"
+sudo tar xzf apache-tomcat-*.tar.gz -C /opt/tomcat 
+---
+- name: install tomcat  and jdk on centos
+  host: tomcat 
+  tasks:
+     - name: fail for unsupported os
+       ansible.builtin.fail:
+        msg: "This playbook is designed only for Ubuntu os"
+       when: ansible_facts['distribution'] != 'Centos'
+     - name: install jdk
+       ansible.builtin.yum:
+            name: "{{ package }}"
+            state: present
+            update_cache: true
+       become: yes
+     - name: install tomcat
+       ansible.builtin.user :
+          system: yes
+          group: "{{ groupname }}"
+          create_home: true
+          comment: "Tomcat User"
+          name: "{{  user }}"
+          home: "{{ homedir }}"
+          shell: "{{ shelldir }}"
+     - name: wget for tomcate file
+       ansible.builtin.get_url:
+            url: "{{ tomcaturl }}"
+            dest: apache-tomcat-10.0.10.tar.gz
+       become: yes
+     - name: tar of file
+       ansible.builtin.unarchive:
+          src: "{{ srcfile }}"
+          dest: /opt/tomcat
+       become: yes
+       
+
+
+  

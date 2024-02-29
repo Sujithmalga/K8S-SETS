@@ -1,0 +1,8 @@
+---
+user: tomcat
+homedir: /opt/tomcat
+shelldir:  /bin/false
+package: java-11-openjdk-devel
+tomcaturl: https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.10/bin/apache-tomcat-10.0.10.tar.gz
+srcfile: apache-tomcat-10.0.10.tar.gz
+groupname: tomcat
