@@ -1,0 +1,84 @@
+- name: install nopCommerce
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: Update package
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install aspnetcore runtime
+      ansible.builtin.apt:
+        name: "{{ asp }}"
+        state: present
+
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Start nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+
+    - name: Configure nginx file
+      ansible.builtin.template:
+        src: nginx_config.j2
+        dest: /etc/nginx/sites-available/default
+      notify:
+        - Restart nginx
+
+    - name: Create directory
+      ansible.builtin.file:
+        path: "{{ path }}"
+        state: directory
+
+    - name: Change to the folder
+      ansible.builtin.command:
+        cmd: chdir="{{ path }}"
+
+    - name: Get nop file
+      ansible.builtin.get_url:
+        url: "{{ url }}"
+        dest: "{{ path }}"
+      become: yes
+
+    - name: Install unzip
+      ansible.builtin.apt:
+        name: unzip
+        state: present
+
+    - name: Unzip nop file
+      ansible.builtin.unarchive:
+        src: /tmp/{{ nopfile }}
+        dest: "{{ path }}"
+        remote_src: yes
+      become: yes
+
+    - name: Create log directory
+      ansible.builtin.file:
+        path: /log
+        state: directory
+
+    - name: Create bin directory
+      ansible.builtin.file:
+        path: /bin
+        state: directory
+
+    - name: Configure nopCommerce service
+      ansible.builtin.template:
+        src: nopCommerce.service.j2
+        dest: /etc/systemd/system/nopCommerce.service
+
+    - name: Start nopCommerce service
+      ansible.builtin.systemd:
+        name: nopCommerce.service
+        state: started
+      notify:
+        - Restart nginx
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
