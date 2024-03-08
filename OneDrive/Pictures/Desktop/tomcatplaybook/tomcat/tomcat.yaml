@@ -66,6 +66,8 @@
         group: "{{ group }}"
         mode:  0600
       become: yes
+      notify:
+         - restarted tomcat
     - name: create host manager
       ansible.builtin.copy module:
          src: tomcat/hostmanager.xml
@@ -75,6 +77,8 @@
          group: "{{ group }}"
          mode: 0600
       become: yes
+      notify:
+         - restarted tomcat
     - name: conf contex file
       ansible.builtin.copy module :
          src: tomcat/managercontex.xml      
@@ -84,28 +88,32 @@
          group: "{{ group }}"
          mode: 0600
       become: yes
+      notify:
+         - restarted tomcat
     - name: creae a file of service 
       ansible.builtin.file module:
-         src: tomcat/tomcat.service
+         src: tomcat/tomcat.service.j2
          path: /etc/systemd/system/tomcat.service 
          state: touch
          owner: "{{ user }}"
          group: "{{ group }}"
          mode: 0600
       become: yes
-    - name: copy file
-      ansible.builtin.copy module :
-          src: tomcat/tomcat.service
-          dest: sudo nano /etc/systemd/system/tomcat.service 
-          mode: 0700
-      notify: 
-         -  start tomcat
+      notify:
+         - started tomcat
+    
 
   handlers:
     - name: start tomcat
       ansible.builtin.service:
         name: tomcat
         state: started
+        enabled: yes
+        daemon_reload: yes 
+    - name: restarted tomcat
+      ansible.builtin.service:
+        name: tomcat
+        state: restarted
         enabled: yes
         daemon_reload: yes 
 
