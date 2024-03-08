@@ -1,0 +1,152 @@
+- name: run nop commers
+  host: webapp
+  tasks:
+
+    - name: run on only ubuntu distribution 
+      ansible.builtin.file:
+        msg: run on ubunutu os
+      when: ansible_facts['distribution'] != '{{ os }}'
+
+    - name: update package to install aspdotnet  
+      ansible.builtin.apt:
+         update_cache: yes
+         name : "{{ dotnet }}"
+         state: present
+      ansible.builtin.debug:
+         msg: installation asp dotnet done
+      become: yes 
+
+    - name: install nginx
+      ansible.builtin.apt :
+        name: nginx
+        state: present
+      ansible.builtin.debug:
+        msg: nginx insalation done
+      become: yes
+
+    - name: start the nginx
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: started
+      ansible.builtin.debug:
+        msg: started nginx
+      become: yes
+      notify:
+         - restart service 
+
+
+    - name: create a file of default
+      ansible.builtin.copy:
+         src: "{{ dpath }}"
+         dest: "{{ destpath }}"
+         mode:  0755
+      ansible.builtin.debug:
+         msg: default file created
+      become: yes
+ 
+    - name:  create a directory
+      file:
+        path: /var/www/nopCommerce
+        state: directory 
+        mode: 0755
+      ansible.builtin.debug:
+         msg: directory created
+      become: yes
+    
+    - name: Change to /var/www/nopCommerce directory
+      ansible.builtin.command:
+        cmd: cd /var/www/nopCommerce
+      ansible.builtin.debug:
+         msg: change directory 
+      become: yes
+    
+    - name: release nop commerce package
+      ansible.builtin.get_url:
+         url: "{{ url }}"
+      ansible.builtin.debug:
+         msg: nop installed  
+      become: yes
+    
+    - name: install unzip package
+      ansible.builtin.apt:
+        name: unzip
+        state: present
+      ansible.builtin.debug:
+         msg: unzip installed 
+      become: yes
+
+    - name: unzip nop zip file
+      ansible.builtin.unarchive:
+          src: /tmp/nopCommerce_4.60.6_NoSource_linux_x64.zip
+          dest: /var/www/nopCommerce
+          remote_src: yes
+      ansible.builtin.debug:
+         msg: unzip is done
+      become: yes
+
+    - name:  create a directory
+      file:
+        path: /bin
+        state: directory 
+        mode: 0755
+      ansible.builtin.debug:
+         msg: bin created
+      become: yes
+
+    - name:  create a directory
+      file:
+        path: /logs 
+        state: directory 
+        mode: 0755
+      ansible.builtin.debug:
+         msg: logs created
+      become: yes
+    
+    - name: Change to /var/www/nopCommerce directory
+      ansible.builtin.command:
+        cmd: cd ..
+      ansible.builtin.debug:
+         msg: change directory 
+      become: yes
+    
+    - name: Change group ownership to www-data
+      become_user: root
+      command: chgrp -R www-data /var/www/nopCommerce
+
+    - name: Change user ownership to www-data
+      become_user: root
+      command: chown -R www-data /var/www/nopCommerce
+
+    - name: create a service file
+      ansible.builtin.copy:
+         src: nop/service.xml
+         dest: /etc/systemd/system/nopCommerce.service 
+         mode:  0600
+      ansible.builtin.debug:
+         msg: service file created
+      become: yes
+      notify:
+         - start service
+    
+  handlers:
+    - name: start  service 
+      ansible.builtin.systemd_service:
+        name: nopCommerce.service
+        state: started
+      
+    - name: restart service 
+      ansible.builtin.systemd_service:
+        name: nopCommerce.service
+        state: restarted
+
+ 
+    
+    
+    
+    
+    
+    
+      
+    
+  
+
