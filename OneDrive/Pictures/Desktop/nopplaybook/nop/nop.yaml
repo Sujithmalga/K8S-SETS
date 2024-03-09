@@ -1,6 +1,6 @@
 ---
 - name: run nop commers
-  host: webapp
+  hosts: webapp
   vars_files:
       - var.yaml
   tasks:
@@ -83,8 +83,10 @@
     
     - name: release nop commerce package
       ansible.builtin.get_url:
-         cmd: "wget https://github.com/nopSolutions/nopCommerce/releases/download/release-4.60.6/nopCommerce_4.60.6_NoSource_linux_x><inux_x64.zip -P /tmp/"  
-         become: yes
+        url: "https://github.com/nopSolutions/nopCommerce/releases/download/release-4.60.6/nopCommerce_4.60.6_NoSource_linux_x64.zip"
+        dest: "/var/www/nopCommerce/nopCommerce_4.60.6_NoSource_linux_x64.zip"
+      become: yes
+
 
     - name: msg debug     
       ansible.builtin.debug:
@@ -95,18 +97,20 @@
       ansible.builtin.apt:
         name: unzip
         state: present
+      become: yes
 
     - name: msg debug    
       ansible.builtin.debug:
          msg: unzip installed 
-      become: yes
+      
 
     - name: unzip nop zip file
       ansible.builtin.unarchive:
-          src: /tmp/nopCommerce_4.60.6_NoSource_linux_x64.zip
+          src: /var/www/nopCommerce/nopCommerce_4.60.6_NoSource_linux_x64.zip
           dest: /var/www/nopCommerce
           remote_src: yes
       become: yes
+
     - name: msg debug     
       ansible.builtin.debug:
          msg: unzip is done
@@ -137,8 +141,8 @@
     
     - name: Change to /var/www/nopCommerce directory
       ansible.builtin.command:
-        cmd: cd ..
-      become: yes
+        cmd: echo "cd /var/www/nopCommerce"
+        chdir: /var/www/nopCommerce
 
     - name:  msg debug  
       ansible.builtin.debug:
@@ -148,10 +152,12 @@
     - name: Change group ownership to www-data
       become_user: root
       command: chgrp -R www-data /var/www/nopCommerce
+      become: yes
 
     - name: Change user ownership to www-data
       become_user: root
       command: chown -R www-data /var/www/nopCommerce
+      become: yes
 
     - name: create a service file
       ansible.builtin.copy:
@@ -165,9 +171,7 @@
     - name: msg debug      
       ansible.builtin.debug:
          msg: service file created
-      become: yes
-      notify:
-         - start service
+      
     
   handlers:
     - name: start  service 
