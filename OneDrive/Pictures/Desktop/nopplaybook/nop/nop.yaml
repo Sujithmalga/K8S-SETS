@@ -1,38 +1,50 @@
+---
 - name: run nop commers
   host: webapp
+  vars_files:
+      - var.yaml
   tasks:
 
     - name: run on only ubuntu distribution 
       ansible.builtin.file:
         msg: run on ubunutu os
-      when: ansible_facts['distribution'] != '{{ os }}'
+      when: ansible_facts['distribution'] != 'Ubuntu'
 
     - name: update package to install aspdotnet  
       ansible.builtin.apt:
          update_cache: yes
          name : "{{ dotnet }}"
          state: present
+      become: yes
+
+    - name: msg debug  
       ansible.builtin.debug:
          msg: installation asp dotnet done
-      become: yes 
+     
 
     - name: install nginx
       ansible.builtin.apt :
         name: nginx
         state: present
+      become: yes
+      
+    - name: msg debug  
       ansible.builtin.debug:
         msg: nginx insalation done
-      become: yes
-
+    
     - name: start the nginx
       ansible.builtin.systemd_service:
         name: nginx
         state: started
-      ansible.builtin.debug:
-        msg: started nginx
       become: yes
       notify:
-         - restart service 
+         - restart service
+     
+    - name: msg debug 
+      ansible.builtin.debug:
+        msg: started nginx
+      
+     
 
 
     - name: create a file of default
@@ -40,6 +52,9 @@
          src: "{{ dpath }}"
          dest: "{{ destpath }}"
          mode:  0755
+      become: yes
+      
+    - name: msg debug
       ansible.builtin.debug:
          msg: default file created
       become: yes
@@ -49,20 +64,29 @@
         path: /var/www/nopCommerce
         state: directory 
         mode: 0755
+      become: yes
+
+    - name: msg debug  
       ansible.builtin.debug:
          msg: directory created
-      become: yes
+      
     
     - name: Change to /var/www/nopCommerce directory
       ansible.builtin.command:
-        cmd: cd /var/www/nopCommerce
+        cmd: echo "cd /var/www/nopCommerce"
+        chdir: /var/www/nopCommerce
+      
+    - name: msg debug 
       ansible.builtin.debug:
          msg: change directory 
-      become: yes
+     
     
     - name: release nop commerce package
       ansible.builtin.get_url:
-         url: "{{ url }}"
+         cmd: "wget https://github.com/nopSolutions/nopCommerce/releases/download/release-4.60.6/nopCommerce_4.60.6_NoSource_linux_x><inux_x64.zip -P /tmp/"  
+         become: yes
+
+    - name: msg debug     
       ansible.builtin.debug:
          msg: nop installed  
       become: yes
@@ -71,6 +95,8 @@
       ansible.builtin.apt:
         name: unzip
         state: present
+
+    - name: msg debug    
       ansible.builtin.debug:
          msg: unzip installed 
       become: yes
@@ -80,34 +106,44 @@
           src: /tmp/nopCommerce_4.60.6_NoSource_linux_x64.zip
           dest: /var/www/nopCommerce
           remote_src: yes
+      become: yes
+    - name: msg debug     
       ansible.builtin.debug:
          msg: unzip is done
-      become: yes
+      
 
     - name:  create a directory
       file:
         path: /bin
         state: directory 
         mode: 0755
+      become: yes
+
+    - name: msg debug    
       ansible.builtin.debug:
          msg: bin created
-      become: yes
+    
 
     - name:  create a directory
       file:
         path: /logs 
         state: directory 
         mode: 0755
+      become: yes
+    - name: msg debug
       ansible.builtin.debug:
          msg: logs created
-      become: yes
+      
     
     - name: Change to /var/www/nopCommerce directory
       ansible.builtin.command:
         cmd: cd ..
+      become: yes
+
+    - name:  msg debug  
       ansible.builtin.debug:
          msg: change directory 
-      become: yes
+      
     
     - name: Change group ownership to www-data
       become_user: root
@@ -122,6 +158,11 @@
          src: nop/service.xml
          dest: /etc/systemd/system/nopCommerce.service 
          mode:  0600
+      become: yes 
+      notify:
+         - start service
+
+    - name: msg debug      
       ansible.builtin.debug:
          msg: service file created
       become: yes
@@ -149,4 +190,3 @@
       
     
   
-
