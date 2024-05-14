@@ -14,6 +14,10 @@ steps:
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
+<<<<<<< HEAD
     echo See https://aka.ms/yamlgit pull --rebase origin master
 
+=======
+    echo See https://aka.ms/yaml
+>>>>>>> new
   displayName: 'Run a multi-line script'
