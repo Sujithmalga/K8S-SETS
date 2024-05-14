@@ -18,3 +18,16 @@ steps:
   displayName: 'Run a multi-line script'
 
   "heelo world"
+
+  steps:
+    - script: echo Hello, world!
+      displayName: 'Run a one-line script'
+    
+    - script: |
+        echo Add other tasks to build, test, and deploy your project.
+        echo See https://aka.ms/yaml
+      displayName: 'Run a multi-line script'
+    
+      "heelo world"
+      git commit -m "Update azure-pipelines.yml"
+    
