@@ -17,7 +17,7 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
-  "heelo world"
+  git checkout master
 
   steps:
     - script: echo Hello, world!
@@ -28,6 +28,5 @@ steps:
         echo See https://aka.ms/yaml
       displayName: 'Run a multi-line script'
     
-      "heelo world"
-      git commit -m "Update azure-pipelines.yml"
+    
     
